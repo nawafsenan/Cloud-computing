@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankDash - Dashboard</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/home.css">
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        window.USER_API = '<%= process.env.USER_API %>';
+        window.TRANS_API = '<%= process.env.TRANS_API %>';
+        window.REPORT_API = '<%= process.env.REPORT_API %>';
+    </script>
+
+</head>
+<body>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo"><i class="fa-solid fa-building-columns"></i> BankDash.</div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a></li>
+                <li><a href="transactions.html"><i class="fa-solid fa-receipt"></i> <span>Transactions</span></a></li>
+                <li><a href="transfer.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> <span>Transfer</span></a></li>
+            </ul>
+        </nav>
+        
+    </aside>
+    <main class="main-content">
+        <div class="header">
+            <div class="title">Overview</div>
+            <div class="actions">
+                
+                <button id="logout-btn" title="Logout" style="background:none;border:none;cursor:pointer;padding:0 10px 0 0;"><i class="fa-solid fa-right-from-bracket"></i></button>
+                <div class="profile">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-grid">
+            <div>
+                <div class="section" style="margin-bottom: 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                        <div class="section-title" style="margin-bottom: 0;">My Cards</div>
+                        <button id="see-all-cards-btn" class="see-all-btn">See All</button>
+                    </div>
+                    <div class="cards-row" id="cards-container"></div>
+                </div>
+                <div class="section" style="display:flex;align-items:center;justify-content:space-between;gap:24px;">
+                    <div style="flex:1;">
+                        <div class="section-title">Balance History</div>
+                        <canvas id="balanceHistory" class="balance-history"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="section totals-section">
+                    <div class="totals-title"><i class="fa-solid fa-arrow-up-right-from-square"></i> Total Sent</div>
+                    <div id="total-sent" class="totals-value">$0.00</div>
+                    <div class="totals-title"><i class="fa-solid fa-arrow-down-left-from-square"></i> Total Received</div>
+                    <div id="total-received" class="totals-value">$0.00</div>
+                </div>
+                <div class="section transaction-stats">
+                    <div class="section-title">Transaction Statistics</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-title"><i class="fa-solid fa-chart-line"></i> Largest Transaction</div>
+                            <div id="largest-transaction" class="stat-value">$0.00</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-title"><i class="fa-solid fa-calculator"></i> Transaction Count</div>
+                            <div id="transaction-count" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-title"><i class="fa-solid fa-chart-pie"></i> Average Transaction</div>
+                            <div id="average-transaction" class="stat-value">$0.00</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-title"><i class="fa-solid fa-circle-check"></i> Successful</div>
+                            <div id="successful-transactions" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-title"><i class="fa-solid fa-circle-xmark"></i> Failed</div>
+                            <div id="failed-transactions" class="stat-value">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section recent-transactions">
+                    <div class="section-title">Recent Transactions</div>
+                    <ul id="recent-transactions-list">
+                        <!-- Transactions will be populated here dynamically -->
+                    </ul>
+                </div>
+                <div class="section usage-section">
+                    <div class="section-title">Account Usage</div>
+                    <div id="usage-content"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add Card Modal -->
+<div id="add-card-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add New Card</h2>
+            <span class="close">&times;</span>
+        </div>
+        <form id="add-card-form">
+            <div class="form-group">
+                <label for="card-username">Username</label>
+                <input type="text" id="card-username" required>
+            </div>
+            <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" maxlength="16" required>
+            </div>
+            <div class="form-group">
+                <label for="card-cvv">CVV</label>
+                <input type="text" id="card-cvv" maxlength="3" required>
+            </div>
+            <div class="form-group">
+                <label for="card-exp">Expiry Date</label>
+                <input type="month" id="card-exp" required>
+            </div>
+            <div class="form-group">
+                <label for="card-name">Cardholder Name</label>
+                <input type="text" id="card-name" required>
+            </div>
+            <div class="form-group">
+                <label for="card-pin">PIN</label>
+                <input type="password" id="card-pin" maxlength="4" required>
+            </div>
+            <div class="form-group">
+                <label for="card-balance">Initial Balance</label>
+                <input type="number" id="card-balance" min="0" step="0.01" required>
+            </div>
+            <button type="submit" class="submit-btn">Create Card</button>
+        </form>
+    </div>
+</div>
+
+<!-- Cards Modal -->
+<div id="all-cards-modal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h2>All My Cards</h2>
+            <span class="close" id="close-all-cards-modal">&times;</span>
+        </div>
+        <div class="cards-row" id="all-cards-container" style="flex-wrap: wrap; max-height: 400px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<!-- Custom JS -->
+<script src="js/home.js"></script>
+</body>
+</html> 

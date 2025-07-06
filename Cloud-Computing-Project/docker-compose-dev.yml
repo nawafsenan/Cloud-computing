@@ -1,0 +1,48 @@
+version: '3'
+services:
+  elasticsearch:
+    ports:
+      - "9200:9200" 
+    env_file:
+      - .env-dev
+
+  user_management:
+    ports:
+      - "5000:5000"  
+    volumes:
+      - ./user_management:/app
+    env_file:
+      - .env-dev     
+
+  transaction:
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./transaction:/app
+    env_file:
+      - .env-dev       
+
+  reporting:
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./reporting:/app
+    env_file:
+      - .env-dev             
+
+  notification:
+    volumes:
+      - ./notification:/app
+    env_file:
+      - .env-dev       
+
+  frontend:
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env-dev  

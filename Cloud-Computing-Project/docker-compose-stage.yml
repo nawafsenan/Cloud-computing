@@ -1,0 +1,73 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+      - ELASTIC_PASSWORD=stage@secret
+      - ELASTIC_USERNAME=elastic
+      - discovery.type=single-node
+      - node.name=test-node
+      - xpack.security.enabled=true
+      
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u elastic:stage@secret http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\\|yellow\"'"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - app-network
+
+  user_management:
+    build: ./user_management
+    env_file:
+      - .env-stage
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+
+  transaction:
+    build: ./transaction
+    env_file:
+      - .env-stage
+    ports:
+      - "5001:5001"
+    networks:
+      - app-network
+
+  reporting:
+    build: ./reporting
+    env_file:
+      - .env-stage
+    ports:
+      - "5002:5002"
+    networks:
+      - app-network
+
+  notification:
+    build: ./notification
+    env_file:
+      - .env-stage
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    env_file:
+      - .env-stage
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:
+    driver: local

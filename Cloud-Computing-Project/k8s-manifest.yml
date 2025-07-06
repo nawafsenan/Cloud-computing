@@ -1,0 +1,335 @@
+# ConfigMap for environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-env-vars
+data:
+  ES_HOST: elasticsearch-svc
+  ES_PORT: "9200"
+  ES_URL: http://elasticsearch-svc:9200
+  discovery.type: single-node
+  xpack.security.enabled: "true"
+  ELASTIC_USERNAME: elastic
+
+  FRONTEND_PORT: "3000"
+  USER_PORT: "5001"
+  TRANS_PORT: "5007"
+  REPORT_PORT: "5002"
+  NOTIFY_PORT: "5008"
+
+  USER_API: http://localhost:30001
+  TRANS_API: http://localhost:30002
+  REPORT_API: http://localhost:30003
+
+
+  USER_SERVICE_URL: http://user-management-svc:5001
+  TRANSACTION_SERVICE_URL: http://transaction-svc:5007
+  REPORT_SERVICE_URL: http://reporting-svc:5002
+  NOTIFY_URL: http://notification-svc:5008/transaction-notify
+
+  SMTP_SERVER: smtp.gmail.com 
+  SMTP_PORT: "587"
+  SMTP_USERNAME: hossamatef2111@gmail.com
+  SENDER_EMAIL: hossamatef2111@gmail.com
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secret-env
+type: Opaque  
+data:
+  SMTP_PASSWORD: aGpveiByb29nIHJhbWMgYWNpaw==
+  ELASTIC_PASSWORD: RWxAc3QxYyNTM2N1cjNQQHNzdzByZDIwMjQh  
+  SERVICE_SECRET: SzhzOW1QMnhMNXZOM3FSN3RZMXdaNGNGNmJIOGpEMG5B
+  JWT_SECRET_KEY: ZVg5a0wybU41cFE4c1Qzdld3WXoxYkM0Zkg2aktOOU0y
+
+---
+# Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: frontend:dev
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: app-env-vars
+        - secretRef:
+            name: secret-env
+
+
+---
+# User Management Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-management
+  template:
+    metadata:
+      labels:
+        app: user-management
+    spec:
+      containers:
+      - name: user-management
+        image: user_management:dev
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5001
+        envFrom:
+        - configMapRef:
+            name: app-env-vars
+        - secretRef:
+            name: secret-env
+  
+---
+# Transaction Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction
+  template:
+    metadata:
+      labels:
+        app: transaction
+    spec:
+      containers:
+      - name: transaction
+        image: transaction:dev
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5007
+        envFrom:
+        - configMapRef:
+            name: app-env-vars
+        - secretRef:
+            name: secret-env
+
+---
+# Reporting Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      containers:
+      - name: reporting
+        image: reporting:dev
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5002
+        envFrom:
+        - configMapRef:
+            name: app-env-vars
+        - secretRef:
+            name: secret-env
+
+---
+# Notification Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      containers:
+      - name: notification
+        image: notification:dev
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5008
+        envFrom:
+        - configMapRef:
+            name: app-env-vars
+        - secretRef:
+            name: secret-env
+
+---
+# Service for frontend
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  labels:
+    app: frontend
+spec:
+  type: NodePort
+  selector:
+    app: frontend
+  ports:
+  - name: frontend
+    port: 3000
+    targetPort: 3000
+    nodePort: 30000
+
+---
+# Service for user-management
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-management-svc
+  labels:
+    app: user-management
+spec:
+  type: NodePort
+  selector:
+    app: user-management
+  ports:
+  - name: user
+    port: 5001
+    targetPort: 5001
+    nodePort: 30001
+
+---
+# Service for transaction
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-svc
+  labels:
+    app: transaction
+spec:
+  type: NodePort
+  selector:
+    app: transaction
+  ports:
+  - name: transaction
+    port: 5007
+    targetPort: 5007
+    nodePort: 30002
+
+---
+# Service for reporting
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-svc
+  labels:
+    app: reporting
+spec:
+  type: NodePort
+  selector:
+    app: reporting
+  ports:
+  - name: reporting
+    port: 5002
+    targetPort: 5002
+    nodePort: 30003
+
+---
+# Service for notification
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-svc
+  labels:
+    app: notification
+spec:
+  type: ClusterIP
+  selector:
+    app: notification
+  ports:
+  - name: notification
+    port: 5008
+    targetPort: 5008
+
+---
+# Elasticsearch StatefulSet and Headless Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-svc
+  labels:
+    app: elasticsearch
+spec:
+  clusterIP: None   
+  selector:
+    app: elasticsearch
+  ports:
+  - name: http
+    port: 9200
+    targetPort: 9200
+
+---
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: elasticsearch
+    labels:
+      app: elasticsearch
+  spec:
+    serviceName: elasticsearch-svc
+    replicas: 1
+    selector:
+      matchLabels:
+        app: elasticsearch
+    template:
+      metadata:
+        labels:
+          app: elasticsearch
+      spec:
+        containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+          ports:
+          - containerPort: 9200
+            name: http
+          envFrom:
+          - configMapRef:
+              name: app-env-vars
+          - secretRef:
+              name: secret-env
+          volumeMounts:
+          - name: data
+            mountPath: /usr/share/elasticsearch/data
+    volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+          

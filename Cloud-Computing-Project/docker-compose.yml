@@ -1,0 +1,55 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\\|yellow\"'"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+    networks:
+      - app-network
+
+  user_management:
+    build: ./user_management
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  transaction:
+    build: ./transaction
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      user_management:
+        condition: service_started
+    networks:
+      - app-network
+
+  reporting:
+    build: ./reporting
+    depends_on:
+      - transaction
+    networks:
+      - app-network
+
+  notification:
+    build: ./notification
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - user_management
+      - transaction
+      - reporting
+      - notification
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    driver: bridge

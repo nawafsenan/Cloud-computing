@@ -1,0 +1,5 @@
+flask
+flask-jwt-extended
+elasticsearch==8.9.0
+werkzeug
+flask-cors

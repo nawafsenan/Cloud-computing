@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankDash - Transfer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/transfer.css">
+    <script>
+        window.USER_API = '<%= process.env.USER_API %>';
+        window.TRANS_API = '<%= process.env.TRANS_API %>';
+        window.REPORT_API = '<%= process.env.REPORT_API %>';
+    </script>
+</head>
+<body>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo"><i class="fa-solid fa-building-columns"></i> BankDash.</div>
+        <nav>
+            <ul>
+                <li><a href="home.html"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a></li>
+                <li><a href="transactions.html"><i class="fa-solid fa-receipt"></i> <span>Transactions</span></a></li>
+                <li><a href="#" class="active"><i class="fa-solid fa-arrow-right-arrow-left"></i> <span>Transfer</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <div class="header">
+            <div class="title">Transfer</div>
+        </div>
+        <button id="see-all-cards-btn" class="see-all-btn" style="margin-bottom: 12px; float: right;">See All</button>
+        <div class="cards-row" id="cards-container" style="margin-bottom: 32px;"></div>
+        <div class="section" style="max-width: 500px; margin: 0 auto;">
+            <div class="modern-transfer">
+                <div class="transfer-header">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Transfer</span>
+                </div>
+                <div class="transfer-divider"></div>
+                <div class="transfer-inputs">
+                    <label class="input-label" for="receiver-input">Receiver Username</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input id="receiver-input" class="receiver-input" type="text" placeholder="Enter username">
+                    </div>
+                    <label class="input-label" for="amount-input">Amount</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        <input id="amount-input" class="amount-input" type="number" placeholder="Enter amount" step="0.01">
+                    </div>
+                    <label class="input-label" for="pin-input">PIN</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-key"></i>
+                        <input id="pin-input" class="pin-input" type="password" placeholder="Enter PIN" maxlength="4">
+                    </div>
+                </div>
+                <button class="send-btn modern-btn"><i class="fa-solid fa-paper-plane"></i> Transfer</button>
+                <div class="transfer-status" style="margin-top:10px;"></div>
+            </div>
+        </div>
+    </main>
+</div>
+<!-- Cards Modal -->
+<div id="all-cards-modal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h2>All My Cards</h2>
+            <span class="close" id="close-all-cards-modal">&times;</span>
+        </div>
+        <div class="cards-row" id="all-cards-container" style="flex-wrap: wrap; max-height: 400px; overflow-y: auto;"></div>
+    </div>
+</div>
+<script src="js/transfer.js"></script>
+</body>
+</html> 

@@ -1,0 +1,20 @@
+FROM python:3.9
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["python", "transaction_service.py"]
+
+# FROM python:3.9-slim
+#
+# WORKDIR /app
+#
+# # Install Python dependencies
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
+#
+# # Copy service code
+# COPY transaction_service.py .
+#
+# EXPOSE 5001
+# CMD ["python", "transaction_service.py"]

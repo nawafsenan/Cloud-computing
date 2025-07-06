@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - Cloud Project</title>
+    <script>
+        // Set the API URL before loading auth.js
+        var USER_API = '<%= USER_API %>';
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo" style="display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;color:#667eea;margin-bottom:24px;gap:10px;">
+            <i class="fa-solid fa-building-columns"></i> BankDash.
+        </div>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">
+                <span>Login</span>
+            </div>
+            <div class="tab" onclick="switchTab('signup')">
+                <span>Sign Up</span>
+            </div>
+        </div>
+
+        <div id="login-form" class="form-container active">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-identifier">Email or Phone</label>
+                    <input type="text" id="login-identifier" placeholder="Enter your email or phone"
+                        autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password"
+                        autocomplete="current-password" required>
+                </div>
+                <button type="submit">
+                    <span>Login</span>
+                </button>
+                <div id="login-message"></div>
+            </form>
+        </div>
+
+        <div id="signup-form" class="form-container">
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signup-fname">First Name</label>
+                    <input type="text" id="signup-fname" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-lname">Last Name</label>
+                    <input type="text" id="signup-lname" placeholder="Enter your last name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">Phone</label>
+                    <input type="tel" id="signup-phone" placeholder="Enter your phone number" autocomplete="tel"
+                        required>
+                </div>
+                <div class="form-group" style="position:relative;">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Choose a password (min. 6 characters)" autocomplete="new-password" required>
+                    <button type="button" class="toggle-password" data-target="signup-password" tabindex="-1">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+                <div class="form-group" style="position:relative;">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" placeholder="Re-enter your password" autocomplete="new-password" required>
+                    <button type="button" class="toggle-password" data-target="signup-confirm-password" tabindex="-1">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label for="signup-birthdate">Birth Date</label>
+                    <input type="date" id="signup-birthdate" required>
+                </div>
+                <button type="submit">
+                    <span>Create Account</span>
+                </button>
+                <div id="signup-message"></div>
+            </form>
+        </div>
+    </div>
+    <script src="/js/auth.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+/* Modern Quick Transfer Styles for Transfer Page */
+.modern-transfer {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(30, 34, 90, 0.07);
+    padding: 32px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.main-content {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+    /* Add padding if needed */
+}
+
+.main-content::before {
+    display: none !important;
+}
+
+/* Ensure the section/card is above the background */
+.section, .modern-transfer {
+    position: relative;
+    z-index: 1;
+}
+
+.transfer-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a73e8;
+    margin-bottom: 10px;
+}
+.transfer-options-row {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+.transfer-option-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.transfer-option-btn {
+    background: #f4f6fb;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #1a73e8;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    margin-bottom: 2px;
+}
+.transfer-option-btn:hover {
+    background: #1a73e8;
+    color: #fff;
+}
+.option-label {
+    font-size: 0.95rem;
+    color: #888;
+    margin-top: 2px;
+}
+.transfer-divider {
+    border-bottom: 1px solid #e0e0e0;
+    margin: 12px 0 10px 0;
+}
+.transfer-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.input-label {
+    font-size: 0.98rem;
+    color: #555;
+    margin-bottom: 2px;
+    margin-top: 8px;
+    font-weight: 500;
+}
+.input-group {
+    display: flex;
+    align-items: center;
+    background: #f4f6fb;
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+.input-group i {
+    margin-right: 8px;
+    color: #1a73e8;
+}
+.input-group input {
+    border: none;
+    background: transparent;
+    padding: 12px 0;
+    width: 100%;
+    font-size: 1rem;
+    outline: none;
+}
+.modern-btn {
+    background: linear-gradient(90deg, #1a73e8 60%, #00b894 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.08);
+    width: 100%;
+}
+.modern-btn:hover {
+    background: linear-gradient(90deg, #00b894 0%, #1a73e8 100%);
+    box-shadow: 0 4px 16px rgba(26, 115, 232, 0.15);
+}
+.transfer-status {
+    width: 100%;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+body {
+    min-height: 100vh;
+    background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 40%, #a084ee 70%, #f6d365 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.main-content, .dashboard-container {
+    background: transparent !important;
+}
+
+.cards-row {
+    display: flex;
+    gap: 24px;
+    min-height: 170px;
+    padding-bottom: 8px;
+    margin-bottom: 32px;
+    max-width: 1400px;
+    justify-content: center;
+    overflow-x: unset;
+}
+.card {
+    min-width: 320px;
+    max-width: 340px;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(26,115,232,0.08);
+    padding: 24px 28px;
+    background: linear-gradient(135deg, #1a73e8 60%, #5e8bff 100%);
+    color: #fff;
+    position: relative;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.card.secondary {
+    background: #fff;
+    color: #222;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+} 

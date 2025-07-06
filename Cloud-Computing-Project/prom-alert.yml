@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: high-resource-alerts
+  namespace: default           # ← make sure this matches
+  labels:
+    #prometheus: prometheus-kube-prometheus-prometheus             # ← adjust if your Prometheus CR has a different name
+    role: alert-rules
+    release: prometheus
+spec:
+  groups:
+  - name: resource-usage.rules
+    rules:
+    - alert: HighCPUUsage
+      expr: 100 - (avg by(instance)(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 70
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Instance {{ $labels.instance }} CPU > 70%"
+        description: "CPU usage is over 90% for more than 2 minutes."
+    - alert: HighMemoryUsage
+      expr: (1 - node_memory_MemAvailable_bytes/node_memory_MemTotal_bytes) * 100 > 70
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Instance {{ $labels.instance }} memory > 70%"
+        description: "Memory usage is over 90% for more than 2 minutes."

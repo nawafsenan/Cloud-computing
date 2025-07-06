@@ -1,0 +1,76 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    ports:
+      - "9200:9200"
+    environment:
+      - path.repo=/usr/share/elasticsearch/backups
+      - ELASTIC_PASSWORD=prod@secret
+      - ELASTIC_USERNAME=elastic
+      - discovery.type=single-node
+      - node.name=prod-node
+      - xpack.security.enabled=true
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - ./es-backups:/usr/share/elasticsearch/backups
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u elastic:prod@secret http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\\|yellow\"'"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: on-failure:5
+    networks:
+      - app-network
+
+
+  user_management:
+    build: ./user_management
+    env_file:
+      - .env-prod
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+
+  transaction:
+    build: ./transaction
+    env_file:
+      - .env-prod
+    ports:
+      - "5001:5001"
+    networks:
+      - app-network
+
+  reporting:
+    build: ./reporting
+    env_file:
+      - .env-prod
+    ports:
+      - "5002:5002"
+    networks:
+      - app-network
+
+  notification:
+    build: ./notification
+    env_file:
+      - .env-prod
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    env_file:
+      - .env-prod
+    ports:
+      - "80:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:
+    driver: local

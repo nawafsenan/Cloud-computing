@@ -1,0 +1,103 @@
+# Register first user (Alice)
+curl -X POST http://localhost:5000/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "hossamatef21@yahoo.com",
+    "phone": "1000000000",
+    "password": "passAlice",
+    "birthdate": "1990-01-01",
+    "fname": "Hossam",
+    "lname": "Atef"
+  }'
+
+# Register second user (Bob)
+curl -X POST http://localhost:5000/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "bob@example.com",
+    "phone": "2000000000",
+    "password": "passBob",
+    "birthdate": "1990-02-02",
+    "fname": "Bob",
+    "lname": "Jones"
+  }'
+
+# Login as Alice to get token
+curl -X POST http://localhost:5000/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "identifier": "1000000000",
+    "password": "passAlice"
+  }'
+
+# Save the token from the response above and use it in the next commands
+# Let's say the token is "YOUR_ALICE_TOKEN"
+
+# Create Alice's card
+curl -X POST http://localhost:5000/cards \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ALICE_TOKEN" \
+  -d '{
+    "username": "alice",
+    "cvv": "111",
+    "cardnumber": "4111111111111111",
+    "exp_date": "2027-12",
+    "cardholder_name": "Alice Smith",
+    "balance": 500.0,
+    "phone": "1000000000",
+    "pin": "1234"
+  }'
+
+# Login as Bob to get token
+curl -X POST http://localhost:5000/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "identifier": "2000000000",
+    "password": "passBob"
+  }'
+
+# Save the token from the response above
+# Let's say the token is "YOUR_BOB_TOKEN"
+
+# Create Bob's card
+curl -X POST http://localhost:5000/cards \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_BOB_TOKEN" \
+  -d '{
+    "username": "bob",
+    "cvv": "222",
+    "cardnumber": "4222222222222222",
+    "exp_date": "2028-11",
+    "cardholder_name": "Bob Jones",
+    "balance": 300.0,
+    "phone": "2000000000",
+    "pin": "5678"
+  }'
+
+  
+
+  # Make a transaction from Alice to Bob
+curl -X POST http://localhost:5001/transactions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ALICE_TOKEN" \
+  -d '{
+    "sender_username": "alice",
+    "receiver_username": "bob",
+    "amount": 100.0,
+    "pin": "1234"
+  }'
+
+# Save the transaction ID from the response above
+# Let's say the transaction ID is "TRANSACTION_ID"
+
+# Get the specific transaction details
+curl -X GET http://localhost:5001/transaction/TRANSACTION_ID \
+  -H "Authorization: Bearer YOUR_ALICE_TOKEN"
+
+# Get all transactions for Alice
+curl -X GET http://localhost:5001/transactions/alice \
+  -H "Authorization: Bearer YOUR_ALICE_TOKEN"
+
+# Get all transactions for Bob
+curl -X GET http://localhost:5001/transactions/bob \
+  -H "Authorization: Bearer YOUR_BOB_TOKEN"

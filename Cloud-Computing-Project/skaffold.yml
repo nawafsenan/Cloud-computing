@@ -1,0 +1,32 @@
+apiVersion: skaffold/v4beta4
+kind: Config
+metadata:
+  name: cloud-main
+
+build:
+  local:
+    push: false
+    useDockerCLI: true
+    useBuildkit: true
+  tagPolicy:
+    customTemplate:
+      template: "dev"
+  artifacts:
+    - image: frontend
+      context: frontend
+    - image: user_management
+      context: user_management
+    - image: transaction
+      context: transaction
+    - image: reporting
+      context: reporting
+    - image: notification
+      context: notification
+
+# <-- Manifest list goes here, not under deploy.kubectl! -->
+manifests:
+  rawYaml:
+    - k8s-manifest.yml
+
+deploy:
+  kubectl: {}
